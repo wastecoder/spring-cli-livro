@@ -1,0 +1,8 @@
+CREATE TABLE LIVROS (
+    id BIGSERIAL PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    autor VARCHAR(255) NOT NULL,
+    ano_publicacao INT NULL
+);
+
+--rollback DROP TABLE LIVROS;
