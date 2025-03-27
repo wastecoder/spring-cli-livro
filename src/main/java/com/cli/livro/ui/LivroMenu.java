@@ -66,6 +66,20 @@ public class LivroMenu {
     }
 
     private void listarLivros() throws SQLException {
+        System.out.println("\n>>>> LISTANDO TODOS OS LIVROS");
+
+        try (var connection = ConnectionConfig.getConnection()) {
+            var service = new LivroService(connection);
+            var livros = service.findAll();
+
+            if (livros.isEmpty()) {
+                System.out.println("Nenhum livro cadastrado.");
+            } else {
+                livros.forEach(livro -> System.out.printf("ID: %d | Título: %s | Autor: %s | Ano: %s\n",
+                        livro.getId(), livro.getTitulo(), livro.getAutor(),
+                        livro.getAnoPublicacao() != null ? livro.getAnoPublicacao().toString() : "N/A"));
+            }
+        }
     }
 
     private void buscarLivro() throws SQLException {

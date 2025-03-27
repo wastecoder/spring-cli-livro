@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -59,6 +61,25 @@ public class LivroDAO {
             }
         }
         return Optional.empty();
+    }
+
+    public List<LivroEntity> findAll() throws SQLException {
+        var sql = "SELECT id, titulo, autor, ano_publicacao FROM LIVROS;";
+        List<LivroEntity> livros = new ArrayList<>();
+
+        try (var statement = connection.prepareStatement(sql);
+             var resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                var entity = new LivroEntity();
+                entity.setId(resultSet.getLong("id"));
+                entity.setTitulo(resultSet.getString("titulo"));
+                entity.setAutor(resultSet.getString("autor"));
+                entity.setAnoPublicacao(resultSet.getObject("ano_publicacao", Integer.class)); //Sem getObject() exibe 0 no null
+                livros.add(entity);
+            }
+        }
+        return livros;
     }
 
     public boolean exists(final Long id) throws SQLException {

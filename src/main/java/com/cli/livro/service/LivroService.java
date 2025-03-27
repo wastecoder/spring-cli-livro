@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 @AllArgsConstructor
 public class LivroService {
@@ -23,6 +24,11 @@ public class LivroService {
         }
 
         return entity;
+    }
+
+    public List<LivroEntity> findAll() throws SQLException {
+        var dao = new LivroDAO(connection);
+        return dao.findAll();
     }
 
     public boolean delete(final Long id) throws SQLException {
