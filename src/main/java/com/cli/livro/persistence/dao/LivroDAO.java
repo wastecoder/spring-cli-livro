@@ -63,6 +63,27 @@ public class LivroDAO {
         return Optional.empty();
     }
 
+    public List<LivroEntity> findByTituloParcial(final String tituloParcial) throws SQLException {
+        var sql = "SELECT id, titulo, autor, ano_publicacao FROM LIVROS WHERE titulo ILIKE ?;"; //ilike = sem case-sensitive
+        List<LivroEntity> livros = new ArrayList<>();
+
+        try (var statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "%" + tituloParcial + "%");
+
+            try (var resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    var entity = new LivroEntity();
+                    entity.setId(resultSet.getLong("id"));
+                    entity.setTitulo(resultSet.getString("titulo"));
+                    entity.setAutor(resultSet.getString("autor"));
+                    entity.setAnoPublicacao(resultSet.getObject("ano_publicacao", Integer.class));
+                    livros.add(entity);
+                }
+            }
+        }
+        return livros;
+    }
+
     public List<LivroEntity> findAll() throws SQLException {
         var sql = "SELECT id, titulo, autor, ano_publicacao FROM LIVROS;";
         List<LivroEntity> livros = new ArrayList<>();

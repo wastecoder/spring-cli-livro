@@ -26,6 +26,11 @@ public class LivroService {
         return entity;
     }
 
+    public List<LivroEntity> findByTituloParcial(final String tituloParcial) throws SQLException {
+        var dao = new LivroDAO(connection);
+        return dao.findByTituloParcial(tituloParcial);
+    }
+
     public List<LivroEntity> findAll() throws SQLException {
         var dao = new LivroDAO(connection);
         return dao.findAll();

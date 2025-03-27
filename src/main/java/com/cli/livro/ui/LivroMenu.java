@@ -83,6 +83,24 @@ public class LivroMenu {
     }
 
     private void buscarLivro() throws SQLException {
+        System.out.println("\n>>>> BUSCANDO LIVROS PELO TÍTULO");
+
+        System.out.println("Digite parte do título do livro que deseja buscar:");
+        inputCharacter();
+        var tituloParcial = scanner.next();
+
+        try (var connection = ConnectionConfig.getConnection()) {
+            var service = new LivroService(connection);
+            var livros = service.findByTituloParcial(tituloParcial);
+
+            if (livros.isEmpty()) {
+                System.out.println("Nenhum livro encontrado com esse título.");
+            } else {
+                livros.forEach(livro -> System.out.printf("ID: %d | Título: %s | Autor: %s | Ano: %s\n",
+                        livro.getId(), livro.getTitulo(), livro.getAutor(),
+                        livro.getAnoPublicacao() != null ? livro.getAnoPublicacao() : "N/A"));
+            }
+        }
     }
 
     private void excluirLivro() throws SQLException {
