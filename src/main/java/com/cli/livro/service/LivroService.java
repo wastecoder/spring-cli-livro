@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 public class LivroService {
@@ -24,6 +25,11 @@ public class LivroService {
         }
 
         return entity;
+    }
+
+    public Optional<LivroEntity> findById(final Long id) throws SQLException {
+        var dao = new LivroDAO(connection);
+        return dao.findById(id);
     }
 
     public List<LivroEntity> findByTituloParcial(final String tituloParcial) throws SQLException {

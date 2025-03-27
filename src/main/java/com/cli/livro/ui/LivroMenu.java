@@ -20,8 +20,9 @@ public class LivroMenu {
             System.out.println("| 1 - Cadastrar um novo livro |");
             System.out.println("| 2 - Listar todos os livros  |");
             System.out.println("| 3 - Buscar livro por título |");
-            System.out.println("| 4 - Excluir um livro        |");
-            System.out.println("| 5 - Sair                    |");
+            System.out.println("| 4 - Buscar livro por ID     |");
+            System.out.println("| 5 - Excluir um livro        |");
+            System.out.println("| 6 - Sair                    |");
             System.out.println("+=============================+");
 
             inputCharacter();
@@ -29,9 +30,10 @@ public class LivroMenu {
             switch (option) {
                 case 1 -> cadastrarLivro();
                 case 2 -> listarLivros();
-                case 3 -> buscarLivro();
-                case 4 -> excluirLivro();
-                case 5 -> System.exit(0);
+                case 3 -> buscarLivroPorTitulo();
+                case 4 -> buscarLivroPorId();
+                case 5 -> excluirLivro();
+                case 6 -> System.exit(0);
                 default -> System.out.println("Opção inválida, informe uma opção do menu");
             }
         }
@@ -82,7 +84,7 @@ public class LivroMenu {
         }
     }
 
-    private void buscarLivro() throws SQLException {
+    private void buscarLivroPorTitulo() throws SQLException {
         System.out.println("\n>>>> BUSCANDO LIVROS PELO TÍTULO");
 
         System.out.println("Digite parte do título do livro que deseja buscar:");
@@ -100,6 +102,26 @@ public class LivroMenu {
                         livro.getId(), livro.getTitulo(), livro.getAutor(),
                         livro.getAnoPublicacao() != null ? livro.getAnoPublicacao() : "N/A"));
             }
+        }
+    }
+
+    private void buscarLivroPorId() throws SQLException {
+        System.out.println("\n>>>> BUSCANDO LIVRO POR ID");
+
+        System.out.println("Digite o ID do livro que deseja buscar:");
+        inputCharacter();
+        var id = scanner.nextLong();
+
+        try (var connection = ConnectionConfig.getConnection()) {
+            var service = new LivroService(connection);
+            var optionalLivro = service.findById(id);
+
+            optionalLivro.ifPresentOrElse(
+                    livro -> System.out.printf("ID: %d | Título: %s | Autor: %s | Ano: %s\n",
+                            livro.getId(), livro.getTitulo(), livro.getAutor(),
+                            livro.getAnoPublicacao() != null ? livro.getAnoPublicacao() : "N/A"),
+                    () -> System.out.printf("Nenhum livro encontrado com ID %d\n", id)
+            );
         }
     }
 
