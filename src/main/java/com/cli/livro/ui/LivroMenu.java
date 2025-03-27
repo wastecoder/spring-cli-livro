@@ -21,8 +21,9 @@ public class LivroMenu {
             System.out.println("| 2 - Listar todos os livros  |");
             System.out.println("| 3 - Buscar livro por título |");
             System.out.println("| 4 - Buscar livro por ID     |");
-            System.out.println("| 5 - Excluir um livro        |");
-            System.out.println("| 6 - Sair                    |");
+            System.out.println("| 5 - Atualizar um livro      |");
+            System.out.println("| 6 - Excluir um livro        |");
+            System.out.println("| 7 - Sair                    |");
             System.out.println("+=============================+");
 
             inputCharacter();
@@ -32,8 +33,9 @@ public class LivroMenu {
                 case 2 -> listarLivros();
                 case 3 -> buscarLivroPorTitulo();
                 case 4 -> buscarLivroPorId();
-                case 5 -> excluirLivro();
-                case 6 -> System.exit(0);
+                case 5 -> atualizarLivro();
+                case 6 -> excluirLivro();
+                case 7 -> System.exit(0);
                 default -> System.out.println("Opção inválida, informe uma opção do menu");
             }
         }
@@ -122,6 +124,57 @@ public class LivroMenu {
                             livro.getAnoPublicacao() != null ? livro.getAnoPublicacao() : "N/A"),
                     () -> System.out.printf("Nenhum livro encontrado com ID %d\n", id)
             );
+        }
+    }
+
+    private void atualizarLivro() throws SQLException {
+        System.out.println("\n>>>> ATUALIZANDO LIVRO");
+
+        System.out.println("Digite o ID do livro que deseja atualizar:");
+        inputCharacter();
+        var id = scanner.nextLong();
+
+        try (var connection = ConnectionConfig.getConnection()) {
+            var service = new LivroService(connection);
+            var optionalLivro = service.findById(id);
+
+            if (optionalLivro.isEmpty()) {
+                System.out.printf("Nenhum livro encontrado com ID %d\n", id);
+                return;
+            }
+
+            var livro = optionalLivro.get();
+            System.out.println("\n>>>> OBS: Nos campos abaixo, deixe vazio (ENTER) para não alterar.\n");
+
+            // BUGFIX: Limpa o ENTER pendente antes de começar
+            scanner.nextLine();
+
+            System.out.println("Digite o novo título:");
+            inputCharacter();
+            var novoTitulo = scanner.nextLine();
+            if (!novoTitulo.isEmpty()) {
+                livro.setTitulo(novoTitulo);
+            }
+
+            System.out.println("Digite o novo autor:");
+            inputCharacter();
+            var novoAutor = scanner.nextLine();
+            if (!novoAutor.isEmpty()) {
+                livro.setAutor(novoAutor);
+            }
+
+            System.out.println("Digite o novo ano de publicação:");
+            inputCharacter();
+            var inputAno = scanner.nextLine();
+            if (!inputAno.isEmpty()) {
+                livro.setAnoPublicacao(Integer.parseInt(inputAno));
+            }
+
+            if (service.update(livro)) {
+                System.out.println("Livro atualizado com sucesso!");
+            } else {
+                System.out.println("Falha ao atualizar o livro.");
+            }
         }
     }
 

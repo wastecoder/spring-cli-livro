@@ -113,4 +113,23 @@ public class LivroDAO {
             }
         }
     }
+
+    public boolean update(final LivroEntity livro) throws SQLException {
+        var sql = "UPDATE LIVROS SET titulo = ?, autor = ?, ano_publicacao = ? WHERE id = ?;";
+
+        try (var statement = connection.prepareStatement(sql)) {
+            statement.setString(1, livro.getTitulo());
+            statement.setString(2, livro.getAutor());
+
+            if (livro.getAnoPublicacao() != null) {
+                statement.setInt(3, livro.getAnoPublicacao());
+            } else {
+                statement.setNull(3, Types.INTEGER);
+            }
+
+            statement.setLong(4, livro.getId());
+
+            return statement.executeUpdate() > 0;
+        }
+    }
 }

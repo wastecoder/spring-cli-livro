@@ -58,4 +58,21 @@ public class LivroService {
             throw e;
         }
     }
+
+    public boolean update(final LivroEntity livro) throws SQLException {
+        var dao = new LivroDAO(connection);
+
+        try {
+            if (!dao.exists(livro.getId())) {
+                return false;
+            }
+
+            boolean updated = dao.update(livro);
+            connection.commit();
+            return updated;
+        } catch (SQLException e) {
+            connection.rollback();
+            throw e;
+        }
+    }
 }
